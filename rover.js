@@ -1,8 +1,7 @@
 
 var grind=new Array(10);
-var x=0;
-var y=0;
-direccion="S";
+var rovers=[];
+
 function inicializar(){
 	for(var i=0;i<10;i++){
 		grind[i]=new Array(1);
@@ -12,20 +11,33 @@ function inicializar(){
 			grind[i][j]="vacio"
 		}
 	}
-	grind[0][0]="rover";
-	direccion="S";
+	//grind[0][0]="rover";
+	//direccion="S";
 }
 
-function mover(comandos){
+function inicializarRover(nombre,x, y, direccion){
+  if (grind[x][y]=="vacio"){
+    rovers[nombre]=[x,y,direccion];
+    grind[x][y]=nombre;
+  }
+  else{
+    console.log("espacio ocupado por "+grind[x][y]);
+  }
+}
+
+function mover(nombre, comandos){
   var i=0;
-  estado="OK";
+  var estado="OK";
+  var x=rovers[nombre][0];
+  var y=rovers[nombre][1];
+  var direccion=rovers[nombre][2];
 while(estado!="ERR" && i<comandos.length){
 	var orden=comandos[i];
 	var movimiento=this.ordenesComando[orden];
-	estado=this[movimiento]();
+	estado=this[movimiento](nombre);
   i++;
 	}
-  console.log("ubicacion del rover: ("+x+","+y+") Direccion: "+direccion);
+  console.log("ubicacion del rover: ("+nombre+"  "+rovers[nombre][0]+","+rovers[nombre][1]+") Direccion: "+rovers[nombre][2]);
 }
 
 var ordenesComando= {
@@ -35,13 +47,16 @@ var ordenesComando= {
     'l': 'turnLeft'
   };
 
-function forward(){
-	switch(direccion){
+function forward(nombre){
+	var x=rovers[nombre][0];
+  var y=rovers[nombre][1];
+  switch(rovers[nombre][2]){
 		case "N":
 			if(x-1<=10 && x-1>=0 && grind[x-1][y]=="vacio"){
-				grind[x-1][y]="rover";
+				grind[x-1][y]=nombre;
 				grind[x][y]="vacio";
 				x--;
+        rovers[nombre][0]=x;
 			} 
 			else{
 				alert('movimiento invalido');
@@ -50,9 +65,10 @@ function forward(){
 		break
 		case "S":
 			if(x+1<=10 && x+1>=0 && grind[x+1][y]=="vacio"){
-				grind[x+1][y]="rover";
+				grind[x+1][y]=nombre;
 				grind[x][y]="vacio";
 				x++;
+        rovers[nombre][0]=x;
 			} 
 			else{
 				alert('movimiento invalido');
@@ -64,6 +80,7 @@ function forward(){
 				grind[x][y+1]="rover";
 				grind[x][y]="vacio";
 				y++;
+        rovers[nombre][1]=y;
 			} 
 			else{
 				alert('movimiento invalido');
@@ -75,6 +92,7 @@ function forward(){
 				grind[x][y-1]="rover";
 				grind[x][y]="vacio";
 				y--;
+        rovers[nombre][1]=y;
 			} 
 			else{
 				alert('movimiento invalido');
@@ -87,13 +105,16 @@ function forward(){
 	}
 }
 
-function back(){
-	switch(direccion){
+function back(nombre){
+	var x=rovers[nombre][0];
+  var y=rovers[nombre][1];
+  switch(rovers[nombre][2]){
 		case "N":
 			if(x+1<=10 && x+1>=0 && grind[x+1][y]=="vacio"){
-				grind[x+1][y]="rover";
+				grind[x+1][y]=nombre;
 				grind[x][y]="vacio";
 				x++;
+        rovers[nombre][0]=x;
 			} 
 			else{
 				alert('movimiento invalido');
@@ -102,9 +123,10 @@ function back(){
 		break
 		case "S":
 			if(x-1<=10 && x-1>=0 && grind[x-1][y]=="vacio"){
-				grind[x-1][y]="rover";
+				grind[x-1][y]=nombre;
 				grind[x][y]="vacio";
 				x--;
+        rovers[nombre][0]=x;
 			} 
 			else{
 				alert('movimiento invalido');
@@ -113,9 +135,10 @@ function back(){
 		break
 		case "E":
 			if(y-1<=10 && y-1>=0 && grind[x][y-1]=="vacio"){
-				grind[x][y-1]="rover";
+				grind[x][y-1]=nombre;
 				grind[x][y]="vacio";
 				y--;
+        rovers[nombre][1]=y;
 			} 
 			else{
 				alert('movimiento invalido');
@@ -124,12 +147,13 @@ function back(){
 		break
 		case "O":
 			if(y+1<=10 && y+1>=0 && grind[x][y+1]=="vacio"){
-				grind[x][y+1]="rover";
+				grind[x][y+1]=nombre;
 				grind[x][y]="vacio";
 				y++;
+        rovers[nombre][1]=y;
 			} 
 			else{
-				alert('movimiento invalido');
+				console.log('movimiento invalido');
 				return "ERR";
 			}
 		break
@@ -139,19 +163,20 @@ function back(){
 	}
 }
 
-function turnLeft(){
-	switch(direccion){
+function turnLeft(nombre){
+	
+  switch(rovers[nombre][2]){
 		case "N":
-			direccion="E";
+			rovers[nombre][2]="E";
 		break
 		case "S":
-			direccion="O";
+			rovers[nombre][2]="O";
 		break
 		case "E":
-			direccion="S";
+			rovers[nombre][2]="S";
 		break
 		case "O":
-			direccion="N";
+			rovers[nombre][2]="N";
 		break
 		default:
 			//comando invalido
@@ -159,19 +184,19 @@ function turnLeft(){
 	}
 }
 
-function turnRight(){
-	switch(direccion){
+function turnRight(nombre){
+  switch(rovers[nombre][2]){
 		case "N":
-			direccion="O";
+			rovers[nombre][2]="O";
 		break
 		case "S":
-			direccion="E";
+			rovers[nombre][2]="E";
 		break
 		case "E":
-			direccion="N";
+			rovers[nombre][2]="N";
 		break
 		case "O":
-			direccion="S";
+			rovers[nombre][2]="S";
 		break
 		default:
 			//comando invalido
