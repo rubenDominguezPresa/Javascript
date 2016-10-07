@@ -25,7 +25,8 @@ window.onload = function() {
 
     var secondParagraph = document.querySelector('.todo-list-items').querySelector('li');
     secondParagraph.parentNode.insertBefore(toDoItem, secondParagraph.lastElementChild);
-
+    doneButton.innerHTML="Done";
+    document.querySelector('h1').style.color = "black";
   }
 
   function markAsDone() {
